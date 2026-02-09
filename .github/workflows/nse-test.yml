@@ -1,0 +1,48 @@
+name: NSE Connectivity Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-nse:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Requests
+        run: pip install requests
+
+      - name: Test NSE Handshake
+        run: |
+          python <<EOF
+          import requests
+
+          session = requests.Session()
+
+          headers = {
+              "User-Agent": "Mozilla/5.0",
+              "Accept-Language": "en-US,en;q=0.9",
+              "Accept-Encoding": "gzip, deflate, br"
+          }
+
+          # Step 1: Hit homepage to get cookies
+          homepage = session.get("https://www.nseindia.com", headers=headers)
+
+          print("Homepage Status:", homepage.status_code)
+
+          # Step 2: Try downloading latest bhavcopy list
+          test_url = "https://www.nseindia.com/api/reports?archives=%5B%7B%22name%22:%22CM%20-%20Bhavcopy(csv)%22,%22type%22:%22archives%22%7D%5D"
+
+          response = session.get(test_url, headers=headers)
+
+          print("API Status:", response.status_code)
+
+          print("Response Preview:", response.text[:200])
+          EOF
