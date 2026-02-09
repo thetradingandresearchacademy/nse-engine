@@ -1,10 +1,10 @@
-name: NSE Connectivity Test
+name: NSE Archive Test
 
 on:
   workflow_dispatch:
 
 jobs:
-  test-nse:
+  test-archive:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,30 +19,15 @@ jobs:
       - name: Install Requests
         run: pip install requests
 
-      - name: Test NSE Handshake
+      - name: Test Static Archive Download
         run: |
           python <<EOF
           import requests
 
-          session = requests.Session()
+          url = "https://archives.nseindia.com/content/historical/EQUITIES/2025/JAN/cm01JAN2025bhav.csv.zip"
 
-          headers = {
-              "User-Agent": "Mozilla/5.0",
-              "Accept-Language": "en-US,en;q=0.9",
-              "Accept-Encoding": "gzip, deflate, br"
-          }
+          response = requests.get(url)
 
-          # Step 1: Hit homepage to get cookies
-          homepage = session.get("https://www.nseindia.com", headers=headers)
-
-          print("Homepage Status:", homepage.status_code)
-
-          # Step 2: Try downloading latest bhavcopy list
-          test_url = "https://www.nseindia.com/api/reports?archives=%5B%7B%22name%22:%22CM%20-%20Bhavcopy(csv)%22,%22type%22:%22archives%22%7D%5D"
-
-          response = session.get(test_url, headers=headers)
-
-          print("API Status:", response.status_code)
-
-          print("Response Preview:", response.text[:200])
+          print("Status Code:", response.status_code)
+          print("Content Size:", len(response.content))
           EOF
