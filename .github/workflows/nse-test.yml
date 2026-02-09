@@ -24,7 +24,7 @@ jobs:
           python <<EOF
           import requests
 
-          url = "https://archives.nseindia.com/content/historical/EQUITIES/2025/JAN/cm01JAN2025bhav.csv.zip"
+          url ="https://archives.nseindia.com/content/historical/EQUITIES/2024/NOV/cm01NOV2024bhav.csv.zip"
 
           response = requests.get(url)
 
